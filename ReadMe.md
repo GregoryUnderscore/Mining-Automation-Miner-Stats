@@ -1,7 +1,9 @@
 # **Miner Stats for CPU and GPU Miners**
 
 ### **Summary**
-Pull and save miner statistics for various mining software (cpuminer-opt supported out-of-the-box). Various SQL queries can then be utilized to aid in mining automation or predictions.
+Pull and save miner statistics for various mining software. Cpuminer-opt and SRBMiner are supported 
+out-of-the-box. You can add your own setup too for other mining software. Various SQL queries can then 
+be utilized to aid in mining automation or predictions.
 
 ### **Important**
 Pool provider statistics are required for profitability estimates/actuals. Before using this, please see the instructions at: https://github.com/GregoryUnderscore/Mining-Automation-ZergPool.com
@@ -12,10 +14,11 @@ and possible profit opportunities. However, to properly calculate these projecti
 for all supported algorithms. This can be a painstaking process when done manually. This program makes the process easier. 
 
 In short, the minerStats.go program does the following:
-1. Connect to a database defined in the configuration file, MinerStats.hcl.
-2. Automatically create the required schema.
-3. Determine all algorithms stored for all pools.
-4. Generate hash rates for the algorithms and store them into the database.
+1. Connects to a database defined in the configuration file, MinerStats.hcl.
+2. Automatically creates the required schema.
+3. Determines all algorithms stored for all pools.
+4. Generates hash rates for the algorithms and store them into the database according to miner software settings
+in MinerStats.hcl.
 
 ### **How to Use**
 
