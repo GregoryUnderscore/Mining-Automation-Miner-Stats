@@ -94,6 +94,11 @@ func main() {
 
 	log.Println("Creating records required for calculations...")
 	minerID := verifyMiner(tx, config.MinerName)
+	err = tx.Commit().Error // Commit changes to the database
+	if err != nil {
+		log.Fatalf("Issue committing changes.\n", err)
+	}
+	tx = db.Begin() // Start anew
 	// Cycle over all the software in the config and check for a match in the database. Create/update
 	// accordingly. This handles all the mapping of software to pool algos.
 	// If a file path was specified for the miner, run calculations and store them into the database.
@@ -104,6 +109,12 @@ func main() {
 		var minerSoftwareAlgos []MinerSoftwareAlgos
 
 		minerProggy = verifyMinerSoftware(tx, minerSoft)
+		err = tx.Commit().Error // Commit changes to the database
+		if err != nil {
+			log.Fatalf("Issue committing changes.\n", err)
+		}
+		tx = db.Begin() // Start anew
+
 		if len(minerSoft.FilePath) > 0 { // If a file path was specified, run calculations.
 			if (MinerSoftware{}) == minerProggy {
 				log.Fatalf("Unexpected failure to locate the mining program in the database.")
@@ -206,6 +217,7 @@ func main() {
 				for scanner.Scan() {
 					line := scanner.Text()
 					if strings.Contains(line, minerSoft.StatSearchPhrase) {
+						tx = db.Begin()
 						linesFound++
 						// Skip hashrate output according to the settings.
 						if linesFound < int(minerSoft.SkipLines) {
@@ -214,6 +226,11 @@ func main() {
 						// Process the hash statistic and store into the database.
 						processHashLine(tx, algo, minerID, line,
 							minerSoft.StatSearchPhrase)
+						err = tx.Commit().Error // Commit changes to the database
+						if err != nil {
+							log.Fatalf("Issue committing changes.\n", err)
+						}
+						tx = db.Begin() // Start anew
 					}
 				}
 				stdout.Close()

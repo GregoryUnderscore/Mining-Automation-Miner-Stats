@@ -26,7 +26,7 @@ software "cpuminer-opt" {
   statWaitTime=60
   // How many lines to skip on the output. If the software outputs low hashrate initially, use this to
   // skip those values. 1 will skip 1 line of hashrate output.
-  skipLines=3
+  skipLines=4
 
   // Algorithm maps - The mining software may not use the pool's algo name (stored in the algorithm table).
   // If so, this can be used to map the mining name to the pool name.
