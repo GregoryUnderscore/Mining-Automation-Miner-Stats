@@ -377,9 +377,6 @@ software "SRBMiner-Multi" {
   algo "keccak" {
     poolName = ""            //   Maxcoin
   }
-  algo "lyra2v2_webchain" {
-    poolName = "lyra2v2"     //   lyrav2
-  }
   algo "minotaurx" {
     poolName = ""
   }
