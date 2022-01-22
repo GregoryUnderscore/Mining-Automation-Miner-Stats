@@ -1,9 +1,9 @@
 # **Miner Stats for CPU and GPU Miners**
 
 ### **Summary**
-Pull and save miner statistics for various mining software. Cpuminer-opt and SRBMiner are supported 
-out-of-the-box. You can add your own setup too for other mining software. Various SQL queries can then 
-be utilized to aid in mining automation or predictions.
+Pull and save miner statistics for various mining software. Cpuminer-opt, SRBMiner, and Cpuminer-rplant are supported 
+out-of-the-box. You can add your own setup too for other mining software. Tested on Linux and Windows. Various SQL queries can 
+also be utilized to aid in mining automation or predictions (/sql folder).
 
 ### **Important**
 Pool provider statistics are required for profitability estimates/actuals. Before using this, please see the instructions at: https://github.com/GregoryUnderscore/Mining-Automation-ZergPool.com
