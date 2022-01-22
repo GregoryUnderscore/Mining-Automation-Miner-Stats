@@ -98,7 +98,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Issue committing changes.\n", err)
 	}
-	tx = db.Begin() // Start anew
 	// Cycle over all the software in the config and check for a match in the database. Create/update
 	// accordingly. This handles all the mapping of software to pool algos.
 	// If a file path was specified for the miner, run calculations and store them into the database.
@@ -107,20 +106,19 @@ func main() {
 		var minerProggy MinerSoftware
 		// This will have all the algos support by the software that have a pool.
 		var minerSoftwareAlgos []MinerSoftwareAlgos
-
+		tx = db.Begin() // Start anew
 		minerProggy = verifyMinerSoftware(tx, minerSoft)
 		err = tx.Commit().Error // Commit changes to the database
 		if err != nil {
 			log.Fatalf("Issue committing changes.\n", err)
 		}
-		tx = db.Begin() // Start anew
 
 		if len(minerSoft.FilePath) > 0 { // If a file path was specified, run calculations.
 			if (MinerSoftware{}) == minerProggy {
 				log.Fatalf("Unexpected failure to locate the mining program in the database.")
 			}
 			// Get all the algorithms for the miner that have a pool.
-			tx.Order("name").
+			db.Order("name").
 				Joins("INNER JOIN pools on pools.algorithm_id = "+
 					"miner_software_algos.algorithm_id").
 				Distinct().
@@ -147,7 +145,7 @@ func main() {
 
 					// Get a pool for the algorithm.
 					var pool Pool
-					tx.Where("algorithm_id = ?", algo.AlgorithmID).Limit(1).Find(&pool)
+					db.Where("algorithm_id = ?", algo.AlgorithmID).Limit(1).Find(&pool)
 					if (Pool{}) == pool {
 						log.Fatalf("No URL available. This software requires a " +
 							"URL: " + minerSoft.Name + " / " + algo.Name)
@@ -217,20 +215,19 @@ func main() {
 				for scanner.Scan() {
 					line := scanner.Text()
 					if strings.Contains(line, minerSoft.StatSearchPhrase) {
-						tx = db.Begin()
 						linesFound++
 						// Skip hashrate output according to the settings.
 						if linesFound < int(minerSoft.SkipLines) {
 							continue
 						}
 						// Process the hash statistic and store into the database.
+						tx = db.Begin()
 						processHashLine(tx, algo, minerID, line,
 							minerSoft.StatSearchPhrase)
 						err = tx.Commit().Error // Commit changes to the database
 						if err != nil {
 							log.Fatalf("Issue committing changes.\n", err)
 						}
-						tx = db.Begin() // Start anew
 					}
 				}
 				stdout.Close()
@@ -238,10 +235,6 @@ func main() {
 		}
 	}
 
-	err = tx.Commit().Error // Finalize data storage
-	if err != nil {
-		log.Fatalf("Issue committing changes.\n", err)
-	}
 	log.Println("Statistics stored.\nOperations complete.\n")
 }
 
