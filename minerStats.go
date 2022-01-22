@@ -306,7 +306,7 @@ func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line 
 				result := tx.Create(&stat)
 				if result.Error != nil {
 
-					log.Fatalf("Issue creating miner statistic for"+
+					log.Fatalf("Issue creating miner statistic for "+
 						algo.Name+".\n", result.Error)
 				}
 				// Stop processing
