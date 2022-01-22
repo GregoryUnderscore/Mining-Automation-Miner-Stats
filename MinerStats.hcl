@@ -424,7 +424,6 @@ software "SRBMiner-Multi" {
   }
 }
 
-// Mining software definitions
 software "cpuminer-rplant" {
   releaseWebsite = "https://github.com/rplant8/cpuminer-opt-rplant/releases"
   // The path to the mining software. If this is blank, it is skipped.
@@ -537,9 +536,6 @@ software "cpuminer-rplant" {
   }
   algo "lyra2rev2" {
     poolName = "lyra2v2"     //   lyrav2
-  }
-  algo "lyra2rev3" {
-    poolName = "verthash"    //   lyrav2v3
   }
   algo "lyra2z" {
     poolName = ""
