@@ -12,8 +12,8 @@ SELECT m.name AS "Miner", ms2.name AS "Software", a.name AS "Algo", average_work
 		WHEN miner_stats.mh_factor = 0.001 THEN 'kH/s'
 		WHEN miner_stats.mh_factor = 0.000001 THEN 'H/s'
 	END AS "Unit",
-	price*profit_estimate*(miner_stats.mh_factor / pools.mh_factor)*miner_stats.work_per_second AS "D Profit Est",  -- The $ estimate per day
-	price*0.001*profit_actual24_hours*(miner_stats.mh_factor / pools.mh_factor)*miner_stats.work_per_second AS "24Hr Profit" -- The $ actual last day
+	price*profit_estimate*(miner_stats.mh_factor / pools.mh_factor)*average_work AS "D Profit Est",  -- The $ estimate per day
+	price*0.001*profit_actual24_hours*(miner_stats.mh_factor / pools.mh_factor)*average_work AS "24Hr Profit" -- The $ actual last day
 FROM miners m
 INNER JOIN ( -- Pulls the latest miner statistic TO use FOR hash factor calculations
 	SELECT miner_id, miner_software_id, algorithm_id, max(id) AS latest_stat_id
@@ -47,4 +47,4 @@ INNER JOIN ( -- Pulls the average hash rate FOR a miner/algo
 	GROUP BY ms.miner_id, ms.miner_software_id, ms.algorithm_id 
 ) average_stat ON
 	average_stat.miner_id = m.id AND average_stat.miner_software_id = ms2.id AND average_stat.algorithm_id = a.id
-ORDER BY (price*profit_estimate*(miner_stats.mh_factor / pools.mh_factor)*miner_stats.work_per_second) DESC;
+ORDER BY (price*profit_estimate*(miner_stats.mh_factor / pools.mh_factor)*average_work) DESC;
