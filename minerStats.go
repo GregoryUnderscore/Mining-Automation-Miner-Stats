@@ -14,12 +14,12 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsimple"
 	"gorm.io/gorm"
 
-	"github.com/GregoryUnderscore/Mining-Automation-Shared/database"
+	. "github.com/GregoryUnderscore/Mining-Automation-Shared/database"
 	. "github.com/GregoryUnderscore/Mining-Automation-Shared/models"
 )
 
 // ====================================
-// Configuration File (ZergPoolData.hcl)
+// Configuration File (MinerStats.hcl)
 // ====================================
 type Config struct {
 	// Database Connectivity
@@ -79,11 +79,11 @@ func main() {
 	}
 
 	// Connect to the database and create/validate the schema.
-	db := database.Connect(config.Host, config.Port, config.Database, config.User, config.Password,
+	db := Connect(config.Host, config.Port, config.Database, config.User, config.Password,
 		config.TimeZone)
-	database.VerifyAndUpdateSchema(db)
+	VerifyAndUpdateSchema(db)
 
-	// Open the new database transaction and get all the coins from CoinGecko along with the BTC price.
+	// Open the new database transaction.
 	tx := db.Begin()
 
 	defer func() { // Ensure transaction rollback on panic
@@ -93,7 +93,7 @@ func main() {
 	}()
 
 	log.Println("Creating records required for calculations...")
-	minerID := verifyMiner(tx, config.MinerName)
+	minerID := VerifyMiner(tx, config.MinerName)
 	err = tx.Commit().Error // Commit changes to the database
 	if err != nil {
 		log.Fatalf("Issue committing changes.\n", err)
@@ -314,28 +314,6 @@ func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line 
 			}
 		}
 	}
-}
-
-// Verify the miner exists in the database. If not, create it.
-// @param tx - The active database session
-// @param minerName - The name of the mining hardware
-// @returns The ID associated with the miner.
-func verifyMiner(tx *gorm.DB, minerName string) uint64 {
-	var miner Miner
-	result := tx.Where("name = ?", minerName).Limit(1).Find(&miner)
-	if result.RowsAffected == 0 {
-		log.Println("Creating miner...")
-		miner.Name = minerName
-		result = tx.Create(&miner)
-		if result.Error != nil {
-			log.Fatalf("Issue creating miner.\n", result.Error)
-		}
-	} else if result.Error != nil {
-		log.Fatalf("Unknown issue storing miner.\n", result.Error)
-	} else {
-		log.Println("Found existing miner.")
-	}
-	return miner.ID
 }
 
 // Verify mining software exists and if not add it.
