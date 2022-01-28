@@ -16,6 +16,7 @@ import (
 
 	. "github.com/GregoryUnderscore/Mining-Automation-Shared/database"
 	. "github.com/GregoryUnderscore/Mining-Automation-Shared/models"
+	. "github.com/GregoryUnderscore/Mining-Automation-Shared/utils/pools"
 )
 
 // ====================================
@@ -142,16 +143,7 @@ func main() {
 				// A pool connection is required. Generate a URL and append to params.
 				if len(minerSoft.PoolParam) > 0 {
 					params = append(params, minerSoft.PoolParam)
-
-					// Get a pool for the algorithm.
-					var pool Pool
-					db.Where("algorithm_id = ?", algo.AlgorithmID).Limit(1).Find(&pool)
-					if (Pool{}) == pool {
-						log.Fatalf("No URL available. This software requires a " +
-							"URL: " + minerSoft.Name + " / " + algo.Name)
-					}
-					// Generate the URL. Can use any pool that supports the algorithm.
-					url := "stratum+tcp://" + pool.URL + ":" + fmt.Sprint(pool.Port)
+					url := GeneratePoolURL(db, algo.AlgorithmID)
 					params = append(params, url)
 				}
 				// If connecting to a pool, a wallet is sometimes required.
