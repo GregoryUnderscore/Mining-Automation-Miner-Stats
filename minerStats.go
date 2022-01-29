@@ -331,6 +331,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
 		minerSoftware.OtherParams = software.OtherParams
+		minerSoftware.SkipLines = software.SkipLines
 		result = tx.Create(&minerSoftware)
 		if result.Error != nil {
 			log.Fatalf("Issue creating miner software.\n", result.Error)
@@ -345,6 +346,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
 		minerSoftware.OtherParams = software.OtherParams
+		minerSoftware.SkipLines = software.SkipLines
 		result = tx.Save(&minerSoftware)
 		if result.Error != nil {
 			log.Fatalf("Issue updating miner software, "+software.Name+".\n", result.Error)
