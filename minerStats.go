@@ -44,12 +44,15 @@ type SoftwareConfig struct {
 	Name string `hcl:"name,label"` // Used to determine if the miner is already in the system
 	// Optional - may be used in the future to handle new releases
 	ReleaseWebsite string `hcl:"releaseWebsite"`
-	FilePath       string `hcl:"filePath"`             // The path to the executable
-	AlgoParam      string `hcl:"algoParam"`            // The parameter used for algorithms
-	PoolParam      string `hcl:"poolParam,optional"`   // If this is set, it connects. Sometimes required.
-	WalletParam    string `hcl:"walletParam,optional"` // Passes a wallet to the connected pool.
-	FileParam      string `hcl:"fileParam,optional"`   // Use if software can log to a file.
-	OtherParams    string `hcl:"otherParams"`          // Other important parameters
+	FilePath       string `hcl:"filePath"`  // The path to the executable
+	AlgoParam      string `hcl:"algoParam"` // The parameter used for algorithms
+	// Whether the software should connect for the actual assessment of statistics. Sometimes required.
+	ConnectForAssessment bool   `hcl:"connectForAssessment"`
+	PoolParam            string `hcl:"poolParam,optional"`     // Used for pool URL specification
+	PasswordParam        string `hcl:"passwordParam,optional"` // Necessary for pool operations sometimes.
+	WalletParam          string `hcl:"walletParam,optional"`   // Passes a wallet to the connected pool.
+	FileParam            string `hcl:"fileParam,optional"`     // Use if software can log to a file.
+	OtherParams          string `hcl:"otherParams"`            // Other important parameters
 	// This is used to find the hash rate in the mining program's screen output (which is saved to file).
 	StatSearchPhrase string `hcl:"statSearchPhrase"`
 	// The amount of time to wait before checking output for statistics, in seconds.
@@ -141,14 +144,14 @@ func main() {
 				params = append([]string{minerProggy.Name, minerProggy.AlgoParam, algo.Name},
 					params...)
 				// A pool connection is required. Generate a URL and append to params.
-				if len(minerSoft.PoolParam) > 0 {
+				if minerSoft.ConnectForAssessment {
 					params = append(params, minerSoft.PoolParam)
 					url := GeneratePoolURL(db, algo.AlgorithmID)
 					params = append(params, url)
-				}
-				// If connecting to a pool, a wallet is sometimes required.
-				if len(minerSoft.WalletParam) > 0 {
-					params = append(params, minerSoft.WalletParam, config.Wallet)
+					// If connecting to a pool, a wallet is sometimes required.
+					if len(minerSoft.WalletParam) > 0 {
+						params = append(params, minerSoft.WalletParam, config.Wallet)
+					}
 				}
 				// Some algorithms have parameters specific to them.
 				if len(algo.ExtraParams) > 0 {
@@ -324,6 +327,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.Website = software.ReleaseWebsite
 		minerSoftware.AlgoParam = software.AlgoParam
 		minerSoftware.PoolParam = software.PoolParam
+		minerSoftware.PasswordParam = software.PasswordParam
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
 		minerSoftware.OtherParams = software.OtherParams
@@ -337,6 +341,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.Website = software.ReleaseWebsite
 		minerSoftware.AlgoParam = software.AlgoParam
 		minerSoftware.PoolParam = software.PoolParam
+		minerSoftware.PasswordParam = software.PasswordParam
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
 		minerSoftware.OtherParams = software.OtherParams

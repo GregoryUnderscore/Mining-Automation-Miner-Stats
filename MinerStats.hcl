@@ -17,6 +17,10 @@ software "cpuminer-opt" {
   // The path to the mining software. If this is blank, it is skipped.
   filePath = ""
   algoParam = "--algo"
+  connectForAssessment = false  // Supports benchmarking without connection
+  poolParam = "--url"  // Used for the pool connection
+  passwordParam = "--pass"
+  walletParam = "--user"
   otherParams = "--benchmark" // Runs in benchmark mode without URL target
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
@@ -313,7 +317,9 @@ software "SRBMiner-Multi" {
   // The path to the mining software. If this is blank, it is skipped.
   filePath = ""
   algoParam = "--algorithm"
+  connectForAssessment = true
   poolParam = "--pool"  // Requires a pool to generate stats. Optional.
+  passwordParam = "--password"
   walletParam = "--wallet" // Requires a wallet to connect. Optional.
   fileParam = "--log-file" // Some software can log to a file. Optional.
   otherParams = "--disable-gpu" // Runs in benchmark mode without URL target
@@ -429,6 +435,10 @@ software "cpuminer-rplant" {
   // The path to the mining software. If this is blank, it is skipped.
   filePath = ""
   algoParam = "--algo"
+  connectForAssessment = false  // Supports benchmarking without connection
+  poolParam = "--url"  // Used for the pool connection
+  passwordParam = "--pass"
+  walletParam = "--user"
   otherParams = "--benchmark" // Runs in benchmark mode without URL target
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
