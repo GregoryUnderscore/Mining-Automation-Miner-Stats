@@ -21,7 +21,8 @@ software "cpuminer-opt" {
   poolParam = "--url"  // Used for the pool connection
   passwordParam = "--pass"
   walletParam = "--user"
-  otherParams = "--benchmark" // Runs in benchmark mode without URL target
+  benchmarkParam = "--benchmark" // Runs in benchmark mode without URL target
+  otherParams = "" // Any other parameters can be added here, if necessary.
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
@@ -322,7 +323,8 @@ software "SRBMiner-Multi" {
   passwordParam = "--password"
   walletParam = "--wallet" // Requires a wallet to connect. Optional.
   fileParam = "--log-file" // Some software can log to a file. Optional.
-  otherParams = "--disable-gpu" // Runs in benchmark mode without URL target
+  benchmarkParam = "" // Runs in benchmark mode without URL target
+  otherParams = "--disable-gpu" // Any other parameters can be added here, if necessary.
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
@@ -439,7 +441,8 @@ software "cpuminer-rplant" {
   poolParam = "--url"  // Used for the pool connection
   passwordParam = "--pass"
   walletParam = "--user"
-  otherParams = "--benchmark" // Runs in benchmark mode without URL target
+  benchmarkParam = "--benchmark" // Runs in benchmark mode without URL target
+  otherParams = "" // Any other parameters can be added here, if necessary.
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.

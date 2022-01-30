@@ -3,9 +3,9 @@ module Mining-Automation-Miner-Stats
 go 1.17
 
 require (
-	github.com/GregoryUnderscore/Mining-Automation-Shared/database v0.0.0-20220129023401-614366a2d3d6
-	github.com/GregoryUnderscore/Mining-Automation-Shared/models v0.0.0-20220129023401-614366a2d3d6
-	github.com/GregoryUnderscore/Mining-Automation-Shared/utils/pools v0.0.0-20220129023401-614366a2d3d6
+	github.com/GregoryUnderscore/Mining-Automation-Shared/database v0.0.0-20220130021414-97a15533986d
+	github.com/GregoryUnderscore/Mining-Automation-Shared/models v0.0.0-20220130021414-97a15533986d
+	github.com/GregoryUnderscore/Mining-Automation-Shared/utils/pools v0.0.0-20220130021414-97a15533986d
 	github.com/hashicorp/hcl/v2 v2.11.1
 	gorm.io/gorm v1.22.5
 )

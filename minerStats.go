@@ -48,11 +48,12 @@ type SoftwareConfig struct {
 	AlgoParam      string `hcl:"algoParam"` // The parameter used for algorithms
 	// Whether the software should connect for the actual assessment of statistics. Sometimes required.
 	ConnectForAssessment bool   `hcl:"connectForAssessment"`
-	PoolParam            string `hcl:"poolParam,optional"`     // Used for pool URL specification
-	PasswordParam        string `hcl:"passwordParam,optional"` // Necessary for pool operations sometimes.
-	WalletParam          string `hcl:"walletParam,optional"`   // Passes a wallet to the connected pool.
-	FileParam            string `hcl:"fileParam,optional"`     // Use if software can log to a file.
-	OtherParams          string `hcl:"otherParams"`            // Other important parameters
+	PoolParam            string `hcl:"poolParam,optional"`      // Used for pool URL specification
+	PasswordParam        string `hcl:"passwordParam,optional"`  // Necessary for pool operations sometimes.
+	WalletParam          string `hcl:"walletParam,optional"`    // Passes a wallet to the connected pool.
+	FileParam            string `hcl:"fileParam,optional"`      // Use if software can log to a file.
+	BenchmarkParam       string `hcl:"benchmarkParam,optional"` // Some support a benchmark parameter
+	OtherParams          string `hcl:"otherParams"`             // Other important parameters
 	// This is used to find the hash rate in the mining program's screen output (which is saved to file).
 	StatSearchPhrase string `hcl:"statSearchPhrase"`
 	// The amount of time to wait before checking output for statistics, in seconds.
@@ -111,6 +112,7 @@ func main() {
 		// This will have all the algos support by the software that have a pool.
 		var minerSoftwareAlgos []MinerSoftwareAlgos
 		tx = db.Begin() // Start anew
+		// Verify the miner software exists and if not create it.
 		minerProggy = verifyMinerSoftware(tx, minerSoft)
 		err = tx.Commit().Error // Commit changes to the database
 		if err != nil {
@@ -121,6 +123,8 @@ func main() {
 			if (MinerSoftware{}) == minerProggy {
 				log.Fatalf("Unexpected failure to locate the mining program in the database.")
 			}
+			// Store the file path for the mining software on the miner.
+			storeMinerSoftwareDetails(db, minerID, minerProggy.ID, minerSoft.FilePath)
 			// Get all the algorithms for the miner that have a pool.
 			db.Order("name").
 				Joins("INNER JOIN pools on pools.algorithm_id = "+
@@ -139,10 +143,18 @@ func main() {
 				// Create the core parameter structure for the miner software.
 				// This includes the algorithm parameter requirements and any other
 				// requirements for benchmarking an algorithm.
-				params := strings.Split(minerProggy.OtherParams, " ")
 				// Create the full parameter list
-				params = append([]string{minerProggy.Name, minerProggy.AlgoParam, algo.Name},
-					params...)
+				params := []string{minerProggy.Name, minerProggy.AlgoParam, algo.Name}
+				// Add in the benchmarking parameters, if any.
+				if len(minerProggy.BenchmarkParams) > 0 {
+					benchmarkParams := strings.Split(minerProggy.BenchmarkParams, " ")
+					params = append(params, benchmarkParams...)
+				}
+				// Process any additional parameters in the catch-all other parameters.
+				if len(minerProggy.OtherParams) > 0 {
+					otherParams := strings.Split(minerProggy.OtherParams, " ")
+					params = append(params, otherParams...)
+				}
 				// A pool connection is required. Generate a URL and append to params.
 				if minerSoft.ConnectForAssessment {
 					params = append(params, minerSoft.PoolParam)
@@ -311,6 +323,39 @@ func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line 
 	}
 }
 
+// Store into the database the file path for a miner/software.
+// @param db - The active database connection
+// @param minerID - The database ID for the miner
+// @param minerSoftwareID - The database ID for the mining software
+// @param filePath - The file path to the mining software on the miner
+func storeMinerSoftwareDetails(db *gorm.DB, minerID uint64, minerSoftwareID uint64, filePath string) {
+	var minerSoftwareDetails MinerMinerSoftware
+	tx := db.Begin() // Start anew
+	tx.Where("miner_id = ? AND miner_software_id = ?", minerID, minerSoftwareID).
+		Find(&minerSoftwareDetails)
+	if (MinerMinerSoftware{}) == minerSoftwareDetails {
+		minerSoftwareDetails.FilePath = filePath
+		minerSoftwareDetails.MinerID = minerID
+		minerSoftwareDetails.MinerSoftwareID = minerSoftwareID
+		result := tx.Create(&minerSoftwareDetails)
+		if result.Error != nil {
+			log.Fatalf("Issue storing file path for miner software.\n",
+				result.Error)
+		}
+	} else { // Save in case the file path has changed.
+		minerSoftwareDetails.FilePath = filePath
+		result := tx.Save(&minerSoftwareDetails)
+		if result.Error != nil {
+			log.Fatalf("Issue updating file path for miner software.\n",
+				result.Error)
+		}
+	}
+	err := tx.Commit().Error // Commit changes to the database
+	if err != nil {
+		log.Fatalf("Issue committing changes.\n", err)
+	}
+}
+
 // Verify mining software exists and if not add it.
 // This is mining software that is supported out-of-the-box.
 // @param tx - The active database session
@@ -330,6 +375,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.PasswordParam = software.PasswordParam
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
+		minerSoftware.BenchmarkParams = software.BenchmarkParam
 		minerSoftware.OtherParams = software.OtherParams
 		minerSoftware.SkipLines = software.SkipLines
 		result = tx.Create(&minerSoftware)
@@ -345,6 +391,7 @@ func verifyMinerSoftware(tx *gorm.DB, software SoftwareConfig) MinerSoftware {
 		minerSoftware.PasswordParam = software.PasswordParam
 		minerSoftware.WalletParam = software.WalletParam
 		minerSoftware.FileParam = software.FileParam
+		minerSoftware.BenchmarkParams = software.BenchmarkParam
 		minerSoftware.OtherParams = software.OtherParams
 		minerSoftware.SkipLines = software.SkipLines
 		result = tx.Save(&minerSoftware)
