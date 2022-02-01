@@ -23,9 +23,10 @@ in MinerStats.hcl.
 ### **How to Use**
 
 1. Follow the instructions first at https://github.com/GregoryUnderscore/Mining-Automation-ZergPool.com
-2. Clone this repository
-3. Update the MinerStats.hcl file with the appropriate details.
-4. go run minerStats.go
+2. Download the latest release and extract it to a folder.
+3. Update the MinerStats.hcl file with the appropriate details. There is no need to change the miner software algorithm and 
+parameter settings unless you know they are incorrect. They should be accurate (or close). You will need to add your file path to the miner software setup.
+4. Run the minerStats.exe or minerStats (on Linux) and wait for it to finish. It could take a few hours if all supported mining software are assessed.
 
 ### **Included Reports**
 In the sql folder are SQL reports. There are reports to see profitability estimates and actuals (daily). Also, there is a report
