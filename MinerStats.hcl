@@ -7,7 +7,7 @@ password="whateves"
 timezone="America/Chicago"
 
 // Miner Stats Configuration
-minerName="Yourminer"  // An identifier for the mining hardware.
+minerName="Your Miner"  // An identifier for the mining hardware.
 // Optional, as some software requires to connect to a pool which may require a wallet
 wallet=""  
 
@@ -22,7 +22,7 @@ software "cpuminer-opt" {
   passwordParam = "--pass"
   walletParam = "--user"
   benchmarkParam = "--benchmark" // Runs in benchmark mode without URL target
-  otherParams = "" // Any other parameters can be added here, if necessary.
+  otherParams = ""  // Any other important params
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
@@ -31,7 +31,7 @@ software "cpuminer-opt" {
   statWaitTime=60
   // How many lines to skip on the output. If the software outputs low hashrate initially, use this to
   // skip those values. 1 will skip 1 line of hashrate output.
-  skipLines=4
+  skipLines=3
 
   // Algorithm maps - The mining software may not use the pool's algo name (stored in the algorithm table).
   // If so, this can be used to map the mining name to the pool name.
@@ -122,7 +122,7 @@ software "cpuminer-opt" {
     poolName = "lyra2v2"     //   lyrav2
   }
   algo "lyra2rev3" {
-    poolName = "verthash"    //   lyrav2v3
+    poolName = ""            //   lyrav2v3
   }
   algo "lyra2z" {
     poolName = ""
@@ -323,8 +323,7 @@ software "SRBMiner-Multi" {
   passwordParam = "--password"
   walletParam = "--wallet" // Requires a wallet to connect. Optional.
   fileParam = "--log-file" // Some software can log to a file. Optional.
-  benchmarkParam = "" // Runs in benchmark mode without URL target
-  otherParams = "--disable-gpu" // Any other parameters can be added here, if necessary.
+  otherParams = "--disable-gpu" // Runs in benchmark mode without URL target
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
@@ -442,7 +441,7 @@ software "cpuminer-rplant" {
   passwordParam = "--pass"
   walletParam = "--user"
   benchmarkParam = "--benchmark" // Runs in benchmark mode without URL target
-  otherParams = "" // Any other parameters can be added here, if necessary.
+  otherParams = ""  // Any other important params
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
@@ -549,6 +548,9 @@ software "cpuminer-rplant" {
   }
   algo "lyra2rev2" {
     poolName = "lyra2v2"     //   lyrav2
+  }
+  algo "lyra2rev3" {
+    poolName = ""            //   lyrav2v3
   }
   algo "lyra2z" {
     poolName = ""
@@ -741,4 +743,3 @@ software "cpuminer-rplant" {
     poolName = ""            //    Ziftr
   }
 }
-
