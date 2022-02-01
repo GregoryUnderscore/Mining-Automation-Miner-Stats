@@ -18,7 +18,7 @@ SELECT m.name AS "Miner", ms2.name AS "Software", msa.name AS "Miner Algo", a.na
 	END AS "Unit",
 	price*profit_estimate*(average_stat.mh_factor / pools.mh_factor)*average_work AS "D Profit Est",  -- The $ estimate per day
 	price*0.001*profit_actual24_hours*(average_stat.mh_factor / pools.mh_factor)*average_work AS "24Hr Profit", -- The $ actual last DAY
-	pools.port, pools.mh_factor 
+	pools.port, pools.mh_factor, do_not_use
 FROM miners m
 INNER JOIN ( -- Pulls the latest miner statistic TO use FOR hash factor calculations
 	SELECT miner_id, miner_software_id, algorithm_id, max(id) AS latest_stat_id
