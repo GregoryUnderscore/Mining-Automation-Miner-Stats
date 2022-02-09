@@ -323,7 +323,10 @@ software "SRBMiner-Multi" {
   passwordParam = "--password"
   walletParam = "--wallet" // Requires a wallet to connect. Optional.
   fileParam = "--log-file" // Some software can log to a file. Optional.
-  otherParams = "--disable-gpu" // Runs in benchmark mode without URL target
+  // NOTE: During tests, great performance was identified setting intensity to 4. Priority set to 1 prevents
+  // the miner from overwhelming system/other important processes. This can be set to the default of 2, if desired.
+  // To enable GPU mining, remove --disable-gpu.
+  otherParams = "--disable-gpu --cpu-threads 0 --cpu-threads-priority 1 --cpu-threads-intensity 4"
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
   statSearchPhrase = "Total:"
   // The amount of time to wait before checking output for statistics, in seconds.
