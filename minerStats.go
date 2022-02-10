@@ -178,7 +178,9 @@ func main() {
 
 				var stdout *os.File
 				// Output should go to a file in the run folder.
-				outputFile := minerProggy.Name + "-" + algo.Name + "-" +
+				// XMRRig has forward slashes in the algo names that must be removed.
+				outputFile := minerProggy.Name + "-" +
+					strings.ReplaceAll(algo.Name, "/", "") + "-" +
 					time.Now().Format("20060102150405.txt")
 				output := []*os.File{os.Stdin, os.Stdout, os.Stderr}
 				// If software does not support logging, try to force its output to a

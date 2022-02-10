@@ -750,13 +750,13 @@ software "cpuminer-rplant" {
 software "XMRRig" {
   releaseWebsite = "https://github.com/xmrig/xmrig"
   // The path to the mining software. If this is blank, it is skipped.
-  filePath = ""
+  filePath = "C:\\Mining\\xmrig-6.16.4\\xmrig.exe"
   algoParam = "--algo"
   connectForAssessment = true
   poolParam = "--url"  // Requires a pool to generate stats. Optional.
   passwordParam = "--pass"
   walletParam = "--user" // Requires a wallet to connect. Optional.
-  fileParam = "" // Some software can log to a file. Optional.
+  fileParam = "--log-file" // Some software can log to a file. Optional.
   // Forces hash rates to print every 15 seconds.
   otherParams = "--print-time 15"
   // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
@@ -773,15 +773,17 @@ software "XMRRig" {
 
   // Algorithm maps - The mining software may not use the pool's algorithm name (in the algorithm table).
   // If so, this can be used to map the mining name to the pool name.
-  algo "cn/ccx" {
-    poolName = "cryptonight_gpu"
-  }
+  // NOTE: cn/ccx did not work in testing with Zergpool. Commenting out.
+  //algo "cn/ccx" {
+  //  poolName = "cryptonight_gpu"
+  //}
   algo "cn/upx2" {
     poolName = "cryptonight_upx"
   }
   algo "cn-heavy/xhv" {
     poolName = "cryptonight_haven"
   }
+  // NOTE: During testing, Zergpool indicated this was incompatible/disabled. Might have been a temporary outage?
   algo "kawpow" {
     poolName = ""
   }
@@ -792,4 +794,3 @@ software "XMRRig" {
     poolName = "randomx"
   }
 }
-
