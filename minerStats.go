@@ -62,7 +62,12 @@ type SoftwareConfig struct {
 	StatWaitTime uint16 `hcl:"statWaitTime"`
 	// The number of hashrate lines to skip. Can be useful if the software outputs low hashrate initially.
 	// 1 will skip 1 line of hashrate output.
-	SkipLines   uint8        `hcl:"skipLines"`
+	SkipLines uint8 `hcl:"skipLines"`
+	// The number of string tokens to skip to get to the hash unit. For instance, if the software outputs:
+	// 1234 H/s  - this is set to 0, nothing to skip
+	// 1234 1000 444 H/s - this is set to 2, as there are 2 numbers to skip between 1234 and H/s.
+	// This setting can vary depending on the number preferred.
+	SkipTokens  uint8        `hcl:"skipTokens,optional"`
 	AlgoConfigs []AlgoConfig `hcl:"algo,block"`
 }
 
@@ -230,7 +235,7 @@ func main() {
 						// Process the hash statistic and store into the database.
 						tx = db.Begin()
 						processHashLine(tx, algo, minerID, line,
-							minerSoft.StatSearchPhrase)
+							minerSoft.StatSearchPhrase, minerSoft.SkipTokens)
 						err = tx.Commit().Error // Commit changes to the database
 						if err != nil {
 							log.Fatalf("Issue committing changes.\n", err)
@@ -276,7 +281,9 @@ func getMhFactor(unit string) float64 {
 // @params minerID - The miner's ID in the database
 // @params line - The line to process
 // @params searchPhrase - The phrase that indicates where the work statistic is in the line
-func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line string, searchPhrase string) {
+// @params unitSkipCount - In some cases, the unit is not adjacent and tokens must be skipped to get it.
+func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line string, searchPhrase string,
+	unitSkipCount uint8) {
 	// Split into tokens for matching on search phrase.
 	pieces := strings.Split(line, " ")
 	phraseFound := false
@@ -287,7 +294,7 @@ func processHashLine(tx *gorm.DB, algo MinerSoftwareAlgos, minerID uint64, line 
 		if !phraseFound && piece == searchPhrase {
 			phraseFound = true
 			workPerSecondIndex := index + 1
-			unitIndex := index + 2
+			unitIndex := index + 2 + int(unitSkipCount)
 			// The format for the output must be NNNNN UNIT.
 			// Examples:
 			//    45.9 h/s

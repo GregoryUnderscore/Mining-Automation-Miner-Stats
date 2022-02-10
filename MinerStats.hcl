@@ -746,3 +746,50 @@ software "cpuminer-rplant" {
     poolName = ""            //    Ziftr
   }
 }
+
+software "XMRRig" {
+  releaseWebsite = "https://github.com/xmrig/xmrig"
+  // The path to the mining software. If this is blank, it is skipped.
+  filePath = ""
+  algoParam = "--algo"
+  connectForAssessment = true
+  poolParam = "--url"  // Requires a pool to generate stats. Optional.
+  passwordParam = "--pass"
+  walletParam = "--user" // Requires a wallet to connect. Optional.
+  fileParam = "" // Some software can log to a file. Optional.
+  // Forces hash rates to print every 15 seconds.
+  otherParams = "--print-time 15"
+  // This is used to find the hash rate in the mining program's screen output (which is saved to a file).
+  statSearchPhrase = "10s/60s/15m"
+  // The amount of time to wait before checking output for statistics, in seconds.
+  // It can be helpful to give the program a few minutes sometimes, as it often calculates an average
+  // hash rate instead of a current hash rate.
+  statWaitTime=140
+  // How many lines to skip on the output. If the software outputs low hashrate initially, use this to
+  // skip those values. 1 will skip 1 line of hashrate output.
+  skipLines=0
+  // This will grab the first number (10s average) and the hash rate unit after the 15m number.
+  skipTokens=2
+
+  // Algorithm maps - The mining software may not use the pool's algorithm name (in the algorithm table).
+  // If so, this can be used to map the mining name to the pool name.
+  algo "cn/ccx" {
+    poolName = "cryptonight_gpu"
+  }
+  algo "cn/upx2" {
+    poolName = "cryptonight_upx"
+  }
+  algo "cn-heavy/xhv" {
+    poolName = "cryptonight_haven"
+  }
+  algo "kawpow" {
+    poolName = ""
+  }
+  algo "rx/arq" {
+    poolName = "randomARQ"
+  }
+  algo "rx/0" {
+    poolName = "randomx"
+  }
+}
+
