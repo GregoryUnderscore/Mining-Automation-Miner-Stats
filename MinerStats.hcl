@@ -750,7 +750,7 @@ software "cpuminer-rplant" {
 software "XMRRig" {
   releaseWebsite = "https://github.com/xmrig/xmrig"
   // The path to the mining software. If this is blank, it is skipped.
-  filePath = "C:\\Mining\\xmrig-6.16.4\\xmrig.exe"
+  filePath = ""
   algoParam = "--algo"
   connectForAssessment = true
   poolParam = "--url"  // Requires a pool to generate stats. Optional.
