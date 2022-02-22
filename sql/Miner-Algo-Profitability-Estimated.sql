@@ -36,14 +36,14 @@ INNER JOIN miner_software_algos msa ON
 	msa.algorithm_id = a.id AND msa.miner_software_id = ms2.id
 INNER JOIN pools ON
 	pools.algorithm_id = a.id
-INNER JOIN pool_stats ON
-	pool_stats.pool_id = pools.id
 INNER JOIN (  -- Pulls the latest pool statistic FOR a pool/algorithm.
-	SELECT max(id) AS id
+	SELECT max(id) AS id, pool_id
 	FROM pool_stats ps 
 	GROUP BY ps.pool_id 
 ) latest_pool_stat ON
-	latest_pool_stat.id = pool_stats.id
+	latest_pool_stat.pool_id = pools.id
+INNER JOIN pool_stats ON
+	pool_stats.id = latest_pool_stat.id
 INNER JOIN coin_prices cp ON
 	pool_stats.coin_price_id = cp.id
 INNER JOIN ( -- Pulls the average hash rate FOR a miner/algo
