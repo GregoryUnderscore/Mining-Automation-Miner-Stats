@@ -3,7 +3,7 @@
 ## See the primary mining automation program here first: https://github.com/GregoryUnderscore/Mining-Automation
 
 ### **Summary**
-Pull and save miner statistics for various mining software. Cpuminer-opt, SRBMiner, and Cpuminer-rplant are supported 
+Pull and save miner statistics for various mining software. XMRrig, Cpuminer-opt, SRBMiner, and Cpuminer-rplant are supported 
 out-of-the-box. You can add your own setup too for other mining software. Tested on Linux and Windows. Various SQL queries can 
 also be utilized to aid in mining automation or predictions (/sql folder).
 
