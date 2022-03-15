@@ -38,6 +38,7 @@ INNER JOIN pools ON
 INNER JOIN (  -- Pulls the latest pool statistic FOR a pool/algorithm.
 	SELECT max(id) AS id, pool_id
 	FROM pool_stats ps 
+	WHERE instant > NOW()::DATE - 7  -- Eliminate OLD pools that ARE NO longer reporting.
 	GROUP BY ps.pool_id 
 ) latest_pool_stat ON
 	latest_pool_stat.pool_id = pools.id
